@@ -5,5 +5,3 @@ from multiemailfield.fields import MultiEmailField
 class Foo(models.Model):
 
     emails = MultiEmailField()
-
-
