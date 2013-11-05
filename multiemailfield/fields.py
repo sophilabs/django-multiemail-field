@@ -50,6 +50,6 @@ class MultiEmailField(fields.TextField):
 
 try:
     from south.modelsinspector import add_introspection_rules
-    add_introspection_rules([], ["^multiemailfield\.fields\.(MultiEmailField)"])
+    add_introspection_rules([], ["^multiemailfield\.fields\.MultiEmailField"])
 except ImportError:
     pass
