@@ -1,0 +1,36 @@
+language: python
+python:
+  - 2.6
+  - 2.7
+  - 3.2
+  - 3.3
+env:
+  - DJANGO='django>=1.4.2,<1.5' DB='postgres'
+  - DJANGO='django>=1.4.2,<1.5' DB='sqlite'
+  - DJANGO='django>=1.5,<1.6' DB='postgres'
+  - DJANGO='django>=1.5,<1.6' DB='sqlite'
+  - DJANGO='git+git://github.com/django/django.git@1.6b1' DB='postgres'
+  - DJANGO='git+git://github.com/django/django.git@1.6b1' DB='sqlite'
+matrix:
+  exclude:
+    - python: 3.2
+      env: DJANGO='django>=1.4.2,<1.5' DB='postgres'
+    - python: 3.2
+      env: DJANGO='django>=1.4.2,<1.5' DB='sqlite'
+    - python: 3.3
+      env: DJANGO='django>=1.4.2,<1.5' DB='postgres'
+    - python: 3.3
+      env: DJANGO='django>=1.4.2,<1.5' DB='sqlite'
+before_install:
+  - export PIP_USE_MIRRORS=true
+install:
+  - pip install coveralls $DJANGO flake8 psycopg2
+  - pip install -e .
+before_script:
+  - export DJANGO_SETTINGS_MODULE=multiemailfield.test_settings
+  - psql -c 'create database multiemailfield_test;' -U postgres
+  - flake8 .
+script:
+  - coverage run --include='*multiemailfield*' --omit='*test_settings.py,*tests.py' $(which django-admin.py) test multiemailfield
+after_success:
+  - coveralls
