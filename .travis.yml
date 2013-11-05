@@ -27,7 +27,7 @@ install:
   - pip install coveralls $DJANGO flake8 psycopg2
   - pip install -e .
 before_script:
-  - export DJANGO_SETTINGS_MODULE=multiemailfield.test_settings
+  - export DJANGO_SETTINGS_MODULE=test_settings
   - psql -c 'create database multiemailfield_test;' -U postgres
   - flake8 .
 script:
