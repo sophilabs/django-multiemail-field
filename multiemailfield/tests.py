@@ -1,27 +1,39 @@
 from django.db import models
 from django.test import TestCase
+from django.db import IntegrityError
 
-from . import MultiEmailField
+from multiemailfield.fields import MultiEmailField
 
 
 class TestModel(models.Model):
     emails = MultiEmailField()
 
 
-#class TestForm(forms.Form):
-#    tz = TimeZoneFormField()
-#    tz_opt = TimeZoneFormField(required=False)
-
-
-#class TestModelForm(forms.ModelForm):
-#    class Meta:
-#        model = TestModel
+class NullTestModel(models.Model):
+    emails = MultiEmailField(null=True, blank=True)
 
 
 class MultiEmailFieldTestCase(TestCase):
 
-    def test_valid_creation(self):
-        mc = TestModel.objects.create(emails="pablo ricco <pricco@gmail.com>")
+    def test_valid_email(self):
+        mc = TestModel.objects.create(emails='pablo ricco <pricco@gmail.com>')
+        self.assertListEqual(mc.emails, [('pablo ricco', 'pricco@gmail.com',)])
         md = TestModel.objects.get(pk=mc.pk)
-        print md
-        print mc
+        self.assertListEqual(md.emails, mc.emails)
+        with self.assertRaises(IntegrityError):
+            TestModel.objects.create(emails=None)
+
+    def test_empty(self):
+        mc = NullTestModel.objects.create(emails='')
+        self.assertEqual(mc.emails, None)
+        mc = NullTestModel.objects.create(emails=None)
+        self.assertEqual(mc.emails, None)
+
+    def test_multiple(self):
+        mc = TestModel.objects.create(emails='pablo ricco <pricco@gmail.com>\n' +
+                                             '"pablo ricco" <pricco@gmail.com>,' +
+                                             'pablo ricco <pricco@gmail.com')
+        self.assertListEqual(mc.emails, [('pablo ricco', 'pricco@gmail.com',),
+                                         ('pablo ricco', 'pricco@gmail.com',),
+                                         ('pablo ricco', 'pricco@gmail.com',)])
+
