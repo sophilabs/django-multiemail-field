@@ -19,7 +19,9 @@ class MultiEmailField(fields.TextField):
         return getaddresses([value])
 
     def _dump(self, value):
-        return ', '.join(['"{0}" <{1}>'.format(*a) for a in value]) if value else None
+        if not value:
+            return None
+        return ', '.join(['"{0}" <{1}>'.format(*a) for a in value])
 
     def to_python(self, value):
         if value is None:

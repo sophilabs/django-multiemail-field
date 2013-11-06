@@ -30,10 +30,10 @@ class MultiEmailFieldTestCase(TestCase):
         self.assertEqual(mc.emails, None)
 
     def test_multiple(self):
-        mc = TestModel.objects.create(emails='pablo ricco <pricco@gmail.com>\n' +
-                                             '"pablo ricco" <pricco@gmail.com>,' +
-                                             'pablo ricco <pricco@gmail.com')
+        emails = 'pablo ricco <pricco@gmail.com>\n' + \
+                 '"pablo ricco" <pricco@gmail.com>,' + \
+                 'pablo ricco <pricco@gmail.com'
+        mc = TestModel.objects.create(emails=emails)
         self.assertListEqual(mc.emails, [('pablo ricco', 'pricco@gmail.com',),
                                          ('pablo ricco', 'pricco@gmail.com',),
                                          ('pablo ricco', 'pricco@gmail.com',)])
-
