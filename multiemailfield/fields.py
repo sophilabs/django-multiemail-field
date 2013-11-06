@@ -1,10 +1,8 @@
 from django.db.models import fields
-from django.utils import six
 from django.db.models.fields.subclassing import Creator
 from django.utils.translation import ugettext_lazy as _
-
-from email.utils import getaddresses
 from multiemailfield.forms import MultiEmailFormField
+from multiemailfield import utils
 
 
 class MultiEmailField(fields.TextField):
@@ -12,34 +10,19 @@ class MultiEmailField(fields.TextField):
 
     description = _('Multiple email addresses')
 
-    def _load(self, value):
-        value = (value or '').strip()
-        if not value:
-            return None
-        return getaddresses([value])
-
-    def _dump(self, value):
-        if not value:
-            return None
-        return ', '.join(['"{0}" <{1}>'.format(*a) for a in value])
-
     def to_python(self, value):
-        if value is None:
-            return None
-        if isinstance(value, six.string_types):
-            return self._load(value)
-        return value
+        return utils.load(value)
 
     def get_db_prep_value(self, value, *args, **kwargs):
         if self.null and value is None and not kwargs.get('force'):
             return None
-        return self._dump(value)
+        return utils.dump(value)
 
     def value_to_string(self, obj):
         return self.get_db_prep_value(self._get_val_from_obj(obj))
 
     def value_from_object(self, obj):
-        return self._dump(super(MultiEmailField, self).value_from_object(obj))
+        return utils.dump(super(MultiEmailField, self).value_from_object(obj))
 
     def formfield(self, **kwargs):
         defaults = {
