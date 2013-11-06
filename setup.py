@@ -1,7 +1,7 @@
 from distutils.core import setup
 
 
-setup(name='multiemailfield',
+setup(name='django-multiemail-field',
       version='0.0.1',
       packages=['multiemailfield'],
       license='MIT',

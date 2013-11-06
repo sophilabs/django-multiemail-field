@@ -7,7 +7,7 @@ Installation
 ============
 .. code-block::
 
-    pip install -e git+git@github.com:sophilabs/django-multiemailfield.git#egg=django-multiemailfield
+    pip install -e git+git@github.com:sophilabs/django-multiemail-field.git#egg=django-multiemail-field
 
 
 Usage
